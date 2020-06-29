@@ -200,7 +200,7 @@ public class SudokuSolver_Gui implements ActionListener
 	}
 	public static boolean isValidSpot(int val , int row, int col, int[][] board)
 	{
-		//First, check if a number already exists in this square. In this case, the square is not equal to 0. 
+		//First, check if a number already exists in this square. In this case, the square is not equal to 0
 		if(board[row][col] != 0)
 		{
 			return false;
