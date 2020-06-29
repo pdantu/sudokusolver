@@ -6,6 +6,7 @@ import java.util.*;
 import javax.swing.*;
 
 //Made by Pranav Dantu. Understood backtracking algorithm from geeksforgeeks and youtube videos.
+//Improvments to make: TODO- Consider using JTextArea[][] instead of JButton[][] to allow user to enter in values and check with correct solution
 public class SudokuSolver_Gui implements ActionListener
 {
 	final int game_size = 9; //Establish a constant to avoid hardcoding
@@ -17,16 +18,19 @@ public class SudokuSolver_Gui implements ActionListener
 	private Color green = Color.GREEN;
 	JFrame frame = new JFrame();
 	private JPanel panel = new JPanel();
-	int[][] board = { {3, 0, 6, 5, 0, 8, 4, 0, 0}, 
-            {5, 2, 0, 0, 0, 0, 0, 0, 0}, 
-		      {0, 8, 7, 0, 0, 0, 0, 3, 1}, 
-		      {0, 0, 3, 0, 1, 0, 0, 8, 0}, 
-		      {9, 0, 0, 8, 6, 3, 0, 0, 5}, 
-		      {0, 5, 0, 0, 9, 0, 6, 0, 0}, 
-		      {1, 3, 0, 0, 0, 0, 2, 5, 0}, 
-		      {0, 0, 0, 0, 0, 0, 0, 7, 4}, 
-		      {0, 0, 5, 2, 0, 6, 3, 0, 0} };
 	
+	//Initialize sudokuboard
+	int[][] board = { {8, 0, 9, 0, 0, 4, 0, 0, 5}, 
+            	      {0, 5, 3, 2, 0, 0, 0, 0, 8}, 
+            	      {0, 0, 0, 0, 0, 1, 7, 0, 0}, 
+            	      {7, 0, 0, 3, 4, 0, 8, 0, 0}, 
+            	      {5, 0, 0, 0, 0, 6, 0, 3, 2}, 
+            	      {0, 0, 4, 8, 0, 0, 9, 0, 0}, 
+            	      {0, 6, 0, 0, 5, 7, 0, 2, 0}, 
+            	      {0, 1, 0, 0, 0, 0, 0, 6, 0}, 
+            	      {0, 2, 0, 4, 0, 0, 0, 0, 0} };
+	
+	//Constructor for gui that adds the buttons and sets the layout for the frame
 	public SudokuSolver_Gui()
 	{
 		solve.addActionListener(this);
@@ -47,12 +51,13 @@ public class SudokuSolver_Gui implements ActionListener
 		//gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 	}
+	//returns the initial board prior to any changes
 	public int[][] getInitial()
 	{
 		return board;
 	}
 	
-	
+	//returns the board once it has been solved
 	public int[][] getSolved()
 	{
 		if(solveBoard(0,0,board))
@@ -62,6 +67,7 @@ public class SudokuSolver_Gui implements ActionListener
 		return null;
 	}
 	
+	//Sets the buttons in the board to the appropriate values 
 	public void fillBoard(JFrame frame, JButton[][] cells, int[][] arr)
 	{
 		for(int i = 0; i < game_size; i++)
@@ -85,6 +91,8 @@ public class SudokuSolver_Gui implements ActionListener
 			}
 		}
 	}
+	//ActionEvent method for when the solve button is clicked 
+	//TODO: Create action event for when other buttons are clicked to input numbers that solve the puzzle
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
@@ -102,6 +110,7 @@ public class SudokuSolver_Gui implements ActionListener
 		}
 		
 	}
+	//resets the board to allow for it to be solved
 	private void resetBoard()
 	{
 		for(int i = 0; i < game_size; i++)
@@ -112,6 +121,7 @@ public class SudokuSolver_Gui implements ActionListener
 			}
 		}
 	}
+	//Updates the state of the board to the solved pieces, changes color of the board to green
 	private void updateBoard(int[][] arr)
 	{
 		for(int i = 0; i < game_size; i++)
@@ -127,11 +137,11 @@ public class SudokuSolver_Gui implements ActionListener
 		}
 	}
 	
-	
+	//Solves the board
 	public static boolean solveBoard(int row, int col, int[][]board)
 	{
-		int count = 0;
 		boolean done = true;
+		//TODO: This code will be necessary in the recursive case when checking from a certain position instead of the entire board each time
 		if(col == board.length && row == board.length)
 		{
 			return true;
@@ -151,7 +161,7 @@ public class SudokuSolver_Gui implements ActionListener
 		{
 			for(int j = col; j < board.length; j++)
 			{
-				if(isEmptySquare(i,j,board))
+				if(isEmptySquare(i,j,board)) //Made isEmptySquare method that returns a boolean 
 				{
 					done = false;
 					row = i;
@@ -174,7 +184,7 @@ public class SudokuSolver_Gui implements ActionListener
 				if(isValidSpot(i,row,col,board))
 				{
 					board[row][col] = i;
-					if(solveBoard(0,0,board))
+					if(solveBoard(0,0,board)) //TODO: Not necessary to start from the initial position of board, can update accordingly 
 					{
 						return true;
 					}
@@ -195,7 +205,7 @@ public class SudokuSolver_Gui implements ActionListener
 		{
 			return false;
 		}
-		//Next, check if there's an existing value in the row and column
+		//Next, check if there's an existing value in the row and column.
 		for(int r = 0, c = col; r  < board.length; r++)
 		{
 			if(board[row][r] == val || board[r][c] == val)
@@ -203,14 +213,15 @@ public class SudokuSolver_Gui implements ActionListener
 				return false;
 			}
 		}
-		//Now, check if there's an existing value in the subgrid
+		
+		//Now, check if there's an existing value in the subgrid. Logic is that the start of the row and column for a 9x9 is always (x-x%3).
 		int subrStart = row - row % 3;
 		int subcStart = col - col % 3;
 		for(int rowS = subrStart; rowS < subrStart + 3; rowS++)
 		{
 			for(int colS =subcStart; colS < subcStart + 3; colS++)
 			{
-				if(board[rowS][colS] == val)
+				if(board[rowS][colS] == val) //If the value already exists in the subgrid, then you may not input this value into the particular cell
 				{
 					return false;
 				}
@@ -219,7 +230,7 @@ public class SudokuSolver_Gui implements ActionListener
 		return true;
 	}
 	
-	
+	//Checks to see if the particular square is an empty square 
 	public static boolean isEmptySquare(int row, int col, int[][] board)
 	{
 		if(board[row][col] == 0)
