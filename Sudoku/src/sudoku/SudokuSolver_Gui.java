@@ -205,7 +205,7 @@ public class SudokuSolver_Gui implements ActionListener
 		{
 			return false;
 		}
-		//Next, check if there's an existing value in the row and column.
+		//Next, check if there's an existing value in the row and column. Establisth two different variables to do this
 		for(int r = 0, c = col; r  < board.length; r++)
 		{
 			if(board[row][r] == val || board[r][c] == val)
